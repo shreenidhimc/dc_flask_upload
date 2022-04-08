@@ -8,7 +8,6 @@ import os
 import wget
 import pandas as pd
 import copy
-import xlrd
 import numpy as np
 app = Flask(__name__)
 
