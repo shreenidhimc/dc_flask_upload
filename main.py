@@ -3,9 +3,6 @@ from distutils import text_file
 from flask import Flask, render_template, request, redirect, url_for,send_file
 # 2 csv 
 #dc kitchen
-from datetime import datetime
-import os
-import wget
 import pandas as pd
 import copy
 import numpy as np
