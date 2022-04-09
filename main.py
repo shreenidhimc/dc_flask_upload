@@ -1,7 +1,5 @@
-from cgitb import text
-from distutils import text_file
-from flask import Flask, render_template, request, redirect, url_for,send_file
-# 2 csv 
+
+from flask import Flask, render_template, request,send_file# 2 csv 
 #dc kitchen
 import pandas as pd
 import copy
@@ -25,8 +23,6 @@ def data():
         dict_dtypes1 = {y : 'str'  for y in lst_str_cols1}
         df = pd.read_excel(file2,dtype=dict_dtypes)
         df2 = pd.read_excel(file,dtype=dict_dtypes1)
-
-        det_df = pd.DataFrame()
 
         # cleaning modified dc report
             
@@ -53,8 +49,6 @@ def data():
 
 
         # In[126]:
-
-
         # dowload xls dc from ax = r_mf1
         # yesterday generated dc = df
 
@@ -70,13 +64,13 @@ def data():
         # In[127]:
 
 
-        r_mf1.head()
+        #r_mf1.head()
 
 
         # In[128]:
 
 
-        df.head()
+        #df.head()
 
 
         # In[129]:
@@ -85,7 +79,7 @@ def data():
         #comapring dc no vlookup InDf2 must be 0 (if 1 same dc no exists )
         r_mf1=r_mf1.assign(InDf2=r_mf1["DC NO"].isin(df.DcNumber).astype(int))
         df_clean_dc = r_mf1[r_mf1.InDf2 != 1]
-        df_clean_dc.head()
+        #df_clean_dc.head()
 
 
         # In[130]:
@@ -108,7 +102,7 @@ def data():
         process_1_dc=process_1_dc.assign(InDf3=process_1_dc["Outlet Id"].isin(sitemaster.Site).astype(int))
         process_1_dc = process_1_dc[process_1_dc.InDf3 != 1]
         df_clean_dc1=process_1_dc.copy()
-        df_clean_dc1.head()
+        #df_clean_dc1.head()
 
 
         # In[133]:
@@ -116,7 +110,7 @@ def data():
 
         #splitting indent
         df_clean_dc1['clean_indent'] = df_clean_dc1['Indent No'].str.split('_').str[1]
-        df_clean_dc1.head()
+        #df_clean_dc1.head()
         df_clean_dc1 = df_clean_dc1.iloc[1: , :]
         dictd2 = {'Unnamed: 1':'Kitchen ID'}
         df_clean_dc1.rename(columns=dictd2,inplace=True)
@@ -133,7 +127,7 @@ def data():
         supp_py = pd.read_csv("supp_line_main_for python.csv",converters={'Site': lambda x: str(x)})
         area_dict=pd.Series(supp_py.Supplier_id.values,index=supp_py.Site).to_dict()
         df_clean_dc1["supp"] = df_clean_dc1["Kitchen ID"].apply(lambda x: area_dict.get(x))
-        df_clean_dc1.head()
+        #df_clean_dc1.head()
 
 
         # In[136]:
@@ -167,7 +161,7 @@ def data():
         f = {'Qty':'sum','Cost Price': 'first','Value': 'first','Std Cost Price': 'first','Std Cost': 'first','Unit': 'first','Indent No': 'first','InDf2': 'first','InDf3': 'first','clean_indent': 'first','supp': 'first'}
         gn = duplicate.groupby(['Kitchen ID','Outlet Id','Trans Date','DC NO','Item Code'], as_index=False).agg(f)
         gn['Value']=gn['Qty']*gn['Cost Price']
-        gn
+        #gn
 
 
         # In[140]:
@@ -184,14 +178,14 @@ def data():
         #for pivot operation
         t = {'Item Code':'count'}
         povt_t=df_clean_dc11.groupby(['DC NO'], as_index=False).agg(t)
-        povt_t.head()
+        #povt_t.head()
 
 
         # In[142]:
 
 
         inner_join = pd.merge(df_clean_dc11, povt_t, on ='DC NO', how ='inner')
-        inner_join
+        #inner_join
 
 
         # In[143]:
@@ -210,7 +204,7 @@ def data():
         import datetime as dt
         DC_format_to_upload_pos['Trans Date']= pd.to_datetime(DC_format_to_upload_pos['Trans Date'], errors='coerce')
         DC_format_to_upload_pos['Trans Date'] = DC_format_to_upload_pos['Trans Date'].dt.strftime("%d-%b-%Y")
-        DC_format_to_upload_pos
+        #DC_format_to_upload_pos
 
 
         # In[144]:
@@ -240,4 +234,4 @@ def data():
         #return render_template('data.html',data=data)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
